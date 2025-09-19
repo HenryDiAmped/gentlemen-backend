@@ -78,7 +78,7 @@ public class UsuarioController {
 		return usuMandar;
 	}
 
-	@PutMapping("/usuarios/{idUsuario}")
+	/*@PutMapping("/usuarios/{idUsuario}")
 	public ResponseEntity<Usuario> actualizar(@PathVariable int idUsuario, @RequestBody Usuario u) {
 		Optional<Usuario> usuarioExistenteOpt = service.listarId(idUsuario);
 
@@ -119,5 +119,5 @@ public class UsuarioController {
 	public ResponseEntity<Usuario> listarPorId(@PathVariable int idUsuario) {
 		Optional<Usuario> usu = service.listarId(idUsuario);
 		return usu.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
-	}
+	}*/
 }
