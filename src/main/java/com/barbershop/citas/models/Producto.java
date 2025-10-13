@@ -22,8 +22,11 @@ public class Producto {
 	@Column(name = "id_producto")
 	private int idProducto;
 	
-	@Column(name = "nombre", length = 45, nullable = false, unique = true)
+	@Column(name = "nombre", length = 150, nullable = false, unique = true)
 	private String nombre;
+	
+	@Column(name = "descripcion", length = 255)
+	private String descripcion;
 	
 	@Column(name = "precio", precision = 5, scale = 2, nullable = false)
 	private BigDecimal precio;
@@ -78,5 +81,13 @@ public class Producto {
 
 	public void setCategoria(Categoria categoria) {
 		this.categoria = categoria;
+	}
+
+	public String getDescripcion() {
+		return descripcion;
+	}
+
+	public void setDescripcion(String descripcion) {
+		this.descripcion = descripcion;
 	}
 }

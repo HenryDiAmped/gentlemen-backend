@@ -78,9 +78,9 @@ public class UsuarioController {
 		return usuMandar;
 	}
 
-	/*@PutMapping("/usuarios/{idUsuario}")
+	@PutMapping("/usuarios/{idUsuario}")
 	public ResponseEntity<Usuario> actualizar(@PathVariable int idUsuario, @RequestBody Usuario u) {
-		Optional<Usuario> usuarioExistenteOpt = service.listarId(idUsuario);
+		Optional<Usuario> usuarioExistenteOpt = service.listById(idUsuario);
 
 		if (!usuarioExistenteOpt.isPresent()) {
 			return ResponseEntity.notFound().build();
@@ -88,22 +88,21 @@ public class UsuarioController {
 
 		Usuario usuarioExistente = usuarioExistenteOpt.get();
 
-		usuarioExistente.setNombre(u.getNombre());
-		usuarioExistente.setApellido(u.getApellido());
-		usuarioExistente.setTipoDocumento(u.getTipoDocumento());
-		usuarioExistente.setNumDocumento(u.getNumDocumento());
-		usuarioExistente.setNumeroCelular(u.getNumeroCelular());
-		usuarioExistente.setCorreoElectronico(u.getCorreoElectronico());
+		usuarioExistente.setNombres(u.getNombres());
+		usuarioExistente.setApellidos(u.getApellidos());
+		usuarioExistente.setDni(u.getDni());
+		usuarioExistente.setEmail(u.getEmail());
+		usuarioExistente.setCelular(u.getCelular());
 		usuarioExistente.setTipoUsuario(u.getTipoUsuario());
 		usuarioExistente.setContrasena(u.getContrasena());
 
-		Usuario usuarioActualizado = service.guardar(usuarioExistente);
+		Usuario usuarioActualizado = service.save(usuarioExistente);
 		return ResponseEntity.ok(usuarioActualizado);
 	}
 
 	@DeleteMapping("/usuarios/{idUsuario}")
 	public ResponseEntity<Map<String, Boolean>> eliminar(@PathVariable int idUsuario) {
-		boolean eliminado = service.eliminar(idUsuario);
+		boolean eliminado = service.delete(idUsuario);
 		Map<String, Boolean> response = new HashMap<>();
 
 		if (eliminado) {
@@ -117,7 +116,7 @@ public class UsuarioController {
 
 	@GetMapping("/usuarios/{idUsuario}")
 	public ResponseEntity<Usuario> listarPorId(@PathVariable int idUsuario) {
-		Optional<Usuario> usu = service.listarId(idUsuario);
+		Optional<Usuario> usu = service.listById(idUsuario);
 		return usu.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
-	}*/
+	}
 }

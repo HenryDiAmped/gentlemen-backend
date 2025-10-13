@@ -36,8 +36,9 @@ public class HorariosAtencion {
 	private Estado estado;
 	
 	public enum Estado {
-		LIBRE,
-		OCUPADO
+		FERIADO,
+		RESERVADO,
+		OTRO
 	}
 	
 	@ManyToOne

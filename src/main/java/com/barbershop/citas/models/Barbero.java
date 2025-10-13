@@ -9,6 +9,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
@@ -24,6 +25,11 @@ public class Barbero {
     @JoinColumn(name = "id_usuario", nullable = false)
 	@OnDelete(action=OnDeleteAction.CASCADE) //Regla de negocio
     private Usuario usuario;
+	
+	@ManyToOne
+    @JoinColumn(name = "id_sede", nullable = false)
+	@OnDelete(action=OnDeleteAction.NO_ACTION) //Regla de negocio
+    private Sede sede;
 	
 	public Barbero() {
 		// TODO Auto-generated constructor stub

@@ -6,41 +6,36 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.barbershop.citas.models.Cita;
-import com.barbershop.citas.repositorys.CitaRepository;
+import com.barbershop.citas.models.Sede;
+import com.barbershop.citas.repositorys.SedeRepository;
 
 @Service
-public class CitaService {
+public class SedeService {
 	@Autowired
-	private CitaRepository repository;
-
+	private SedeRepository repository;
+	
 	// Guardar: para agregar nuevos y modificar
-	public Cita save(Cita c) {
-		return repository.save(c);
+	public Sede save(Sede s) {
+		return repository.save(s);
 	}
 
 	// Listar: para recuperar a todos
-	public List<Cita> list() {
-		return (List<Cita>) repository.findAll();
+	public List<Sede> list() {
+		return (List<Sede>) repository.findAll();
 	}
 
 	// Listar por id: recuperar solo uno por id
-	public Optional<Cita> listById(int id) {
+	public Optional<Sede> listById(int id) {
 		return repository.findById(id);
 	}
 
 	// Eliminar: para eliminar un usuario por su id
 	public boolean delete(int id) {
-		Optional<Cita> Opt = listById(id);
+		Optional<Sede> Opt = listById(id);
 		if (Opt.isPresent()) {
 			repository.deleteById(id);
 			return true;
 		}
 		return false;
-	}
-	
-	// Listar cita por id de cliente
-	public List<Cita> listByIdCliente(int idCliente) {
-		return repository.findByClienteIdCliente(idCliente);
 	}
 }

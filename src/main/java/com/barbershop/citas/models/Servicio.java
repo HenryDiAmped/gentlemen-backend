@@ -2,11 +2,16 @@ package com.barbershop.citas.models;
 
 import java.math.BigDecimal;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -17,14 +22,19 @@ public class Servicio {
 	@Column(name = "id_servicio")
 	private int idServicio;
 	
-	@Column(name = "nombre", length = 45, nullable = false, unique = true)
+	@Column(name = "nombre", length = 150, nullable = false, unique = true)
 	private String nombre;
 	
-	@Column(name = "detalle", length = 255, nullable = false, unique = true)
+	@Column(name = "detalle", length = 255, nullable = false)
 	private String detalle;
 	
 	@Column(name = "tarifa", precision = 5, scale = 2, nullable = false)
 	private BigDecimal tarifa;
+	
+	@ManyToOne
+    @JoinColumn(name = "id_tipo_servicio", nullable = false)
+	@OnDelete(action=OnDeleteAction.NO_ACTION) //Regla de negocio
+    private TipoServicio tipoServicio;
 	
 	public Servicio() {
 		// TODO Auto-generated constructor stub
@@ -60,5 +70,13 @@ public class Servicio {
 
 	public void setTarifa(BigDecimal tarifa) {
 		this.tarifa = tarifa;
+	}
+
+	public TipoServicio getTipoServicio() {
+		return tipoServicio;
+	}
+
+	public void setTipoServicio(TipoServicio tipoServicio) {
+		this.tipoServicio = tipoServicio;
 	}
 }

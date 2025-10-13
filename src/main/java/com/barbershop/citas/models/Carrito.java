@@ -37,6 +37,9 @@ public class Carrito {
 		NO_APROBADO
 	}
 	
+	@Column(name = "cantidad", nullable = false)
+	private int cantidad;
+	
 	@OneToOne
 	@JoinColumn(name = "id_producto", nullable = false)
 	@OnDelete(action=OnDeleteAction.CASCADE) //Regla de negocio
@@ -51,7 +54,7 @@ public class Carrito {
 	@JoinColumn(name = "id_cliente", nullable = false)
 	@OnDelete(action=OnDeleteAction.CASCADE) //Regla de negocio
 	private Cliente cliente;
-	
+		
 	public Carrito() {
 		// TODO Auto-generated constructor stub
 	}
@@ -102,5 +105,13 @@ public class Carrito {
 
 	public void setCliente(Cliente cliente) {
 		this.cliente = cliente;
+	}
+
+	public int getCantidad() {
+		return cantidad;
+	}
+
+	public void setCantidad(int cantidad) {
+		this.cantidad = cantidad;
 	}
 }

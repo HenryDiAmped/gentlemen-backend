@@ -38,6 +38,9 @@ public class Pedido {
 	@Column(name = "fecha_pedido", nullable = false)
 	private LocalDate fechaPedido;
 	
+	@Column(name = "direccion", nullable = false)
+	private String direccion;
+	
 	public Pedido() {
 		// TODO Auto-generated constructor stub
 	}
@@ -80,5 +83,13 @@ public class Pedido {
 
 	public void setFechaPedido(LocalDate fechaPedido) {
 		this.fechaPedido = fechaPedido;
+	}
+
+	public String getDireccion() {
+		return direccion;
+	}
+
+	public void setDireccion(String direccion) {
+		this.direccion = direccion;
 	}
 }
