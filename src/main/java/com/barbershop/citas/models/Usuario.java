@@ -41,7 +41,6 @@ public class Usuario {
 	
 	public enum TipoUsuario {
 	    ADMINISTRADOR,
-	    BARBERO,
 	    CLIENTE
 	}
 	
@@ -81,7 +80,7 @@ public class Usuario {
 		this.dni = dni;
 	}
 
-	public String getEmail() {
+	public String getCorreo() {
 		return email;
 	}
 

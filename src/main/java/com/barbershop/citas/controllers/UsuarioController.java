@@ -34,10 +34,7 @@ public class UsuarioController {
 
 	@Autowired
 	private AdministradorService serviceA;
-	
-	@Autowired
-	private BarberoService serviceB;
-	
+		
 	@Autowired
 	private ClienteService serviceC;
 	
@@ -65,10 +62,6 @@ public class UsuarioController {
 			Administrador admin = new Administrador();
 			admin.setUsuario(usuMandar);
 			serviceA.save(admin);
-		} else if (usuMandar.getTipoUsuario() == TipoUsuario.BARBERO) {
-			Barbero barber = new Barbero();
-			barber.setUsuario(usuMandar);
-			serviceB.save(barber);
 		} else if (usuMandar.getTipoUsuario() == TipoUsuario.CLIENTE) {
 			Cliente cliente = new Cliente();
 			cliente.setUsuario(usuMandar);
@@ -91,7 +84,7 @@ public class UsuarioController {
 		usuarioExistente.setNombres(u.getNombres());
 		usuarioExistente.setApellidos(u.getApellidos());
 		usuarioExistente.setDni(u.getDni());
-		usuarioExistente.setEmail(u.getEmail());
+		usuarioExistente.setEmail(u.getCorreo());
 		usuarioExistente.setCelular(u.getCelular());
 		usuarioExistente.setTipoUsuario(u.getTipoUsuario());
 		usuarioExistente.setContrasena(u.getContrasena());
