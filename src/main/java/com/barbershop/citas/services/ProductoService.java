@@ -14,7 +14,7 @@ public class ProductoService {
 	@Autowired
 	private ProductoRepository repository;
 
-	// Guardar: para agregar nuevos y modificar
+		// Guardar: para agregar nuevos y modificar
 	public Producto save(Producto p) {
 		return repository.save(p);
 	}

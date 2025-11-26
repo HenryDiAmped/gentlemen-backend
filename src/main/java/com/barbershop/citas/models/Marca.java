@@ -2,15 +2,14 @@ package com.barbershop.citas.models;
 
 import jakarta.persistence.*;
 
-
 @Entity
-@Table(name = "categorias")
-public class Categoria {
+@Table(name = "marcas")
+public class Marca {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_categoria")
-    private int idCategoria;
+    @Column(name = "id_marca")
+    private Long idMarca;
 
     @Column(nullable = false)
     private String nombre;
@@ -18,15 +17,15 @@ public class Categoria {
     @Column(length = 500)
     private String descripcion;
 
-	public Categoria() {
+	public Marca() {
 	}
 
-	public int getIdCategoria() {
-		return idCategoria;
+	public Long getIdMarca() {
+		return idMarca;
 	}
 
-	public void setIdCategoria(int idCategoria) {
-		this.idCategoria = idCategoria;
+	public void setIdMarca(Long idMarca) {
+		this.idMarca = idMarca;
 	}
 
 	public String getNombre() {
