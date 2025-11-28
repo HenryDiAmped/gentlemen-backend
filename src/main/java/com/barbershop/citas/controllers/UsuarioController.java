@@ -17,12 +17,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.barbershop.citas.models.Administrador;
-import com.barbershop.citas.models.Barbero;
 import com.barbershop.citas.models.Cliente;
 import com.barbershop.citas.models.Usuario;
 import com.barbershop.citas.models.Usuario.TipoUsuario;
 import com.barbershop.citas.services.AdministradorService;
-import com.barbershop.citas.services.BarberoService;
 import com.barbershop.citas.services.ClienteService;
 import com.barbershop.citas.services.UsuarioService;
 

@@ -55,13 +55,8 @@ public class ProductoController {
 	    productoExistente.setDescripcion(p.getDescripcion());
 	    productoExistente.setPrecio(p.getPrecio());
 	    productoExistente.setStock(p.getStock());
-	    
-	    // Asegúrate de que Angular envíe los nombres EXACTOS de estas propiedades
 	    productoExistente.setCategoria(p.getCategoria());
 	    productoExistente.setMarca(p.getMarca());
-	    
-	    // OJO AQUÍ: Si en Angular envías "imageUrl", Java espera "imageUrl".
-	    // Si tu modelo Java es "imagenUrl", debes alinearlos.
 	    productoExistente.setImagenUrl(p.getImagenUrl()); 
 
 	    Producto productoActualizado = service.save(productoExistente);

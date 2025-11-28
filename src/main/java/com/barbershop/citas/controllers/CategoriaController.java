@@ -61,8 +61,7 @@ public class CategoriaController {
         
         // Actualizamos los campos
         categoriaExistente.setNombre(c.getNombre());
-        // Si tienes descripción en tu modelo, descomenta esto:
-        // categoriaExistente.setDescripcion(c.getDescripcion());
+        categoriaExistente.setDescripcion(c.getDescripcion());
 
         Categoria categoriaActualizado = service.save(categoriaExistente);
         return ResponseEntity.ok(categoriaActualizado);
