@@ -46,6 +46,7 @@ public class TipoServicioController {
 	    TipoServicio tipoServicioExistente = tipoServicioExistenteOpt.get();
 	    
 	    tipoServicioExistente.setNombre(t.getNombre());
+	    tipoServicioExistente.setServicios(t.getServicios());
 
 	    TipoServicio tipoServicioActualizado = service.save(tipoServicioExistente);
 	    return ResponseEntity.ok(tipoServicioActualizado);

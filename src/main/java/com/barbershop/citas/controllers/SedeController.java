@@ -47,6 +47,9 @@ public class SedeController {
 	    
 	    sedeExistente.setNombreSede(s.getNombreSede());
 	    sedeExistente.setDireccion(s.getDireccion());
+	    sedeExistente.setImagenUrl(s.getImagenUrl());
+	    sedeExistente.setMapaLink(s.getMapaLink());
+	    sedeExistente.setNumero(s.getNumero());
 
 	    Sede sedeActualizado = service.save(sedeExistente);
 	    return ResponseEntity.ok(sedeActualizado);

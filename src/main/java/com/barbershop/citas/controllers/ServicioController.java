@@ -49,6 +49,8 @@ public class ServicioController {
 	    serviciosExistente.setDetalle(s.getDetalle());
 	    serviciosExistente.setTarifa(s.getTarifa());
 	    serviciosExistente.setTipoServicio(s.getTipoServicio());
+	    serviciosExistente.setDuracion(s.getDuracion());
+	    serviciosExistente.setImagenUrl(s.getImagenUrl());
 
 	    Servicio serviciosActualizado = service.save(serviciosExistente);
 	    return ResponseEntity.ok(serviciosActualizado);

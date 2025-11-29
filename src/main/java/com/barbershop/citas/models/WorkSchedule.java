@@ -1,19 +1,20 @@
 package com.barbershop.citas.models;
 
+import java.util.List;
 import jakarta.persistence.Embeddable;
+// Asegúrate de tener las importaciones correctas para ElementCollection si decides mapearlo así, 
+// o usa un Converter si prefieres guardarlo como JSON string en la BD.
 
 @Embeddable
 public class WorkSchedule {
-	private String day;     // Ej: "Lunes"
-    private String start;   // Ej: "09:00"
-    private String end;     // Ej: "17:00"
+    private String day;      // Ej: "Lunes"
+    private List<String> hours; // Ej: ["09:00", "10:00", "11:00"]
 
     public WorkSchedule() {}
 
-    public WorkSchedule(String day, String start, String end) {
+    public WorkSchedule(String day, List<String> hours) {
         this.day = day;
-        this.start = start;
-        this.end = end;
+        this.hours = hours;
     }
 
     public String getDay() {
@@ -24,19 +25,11 @@ public class WorkSchedule {
         this.day = day;
     }
 
-    public String getStart() {
-        return start;
+    public List<String> getHours() {
+        return hours;
     }
 
-    public void setStart(String start) {
-        this.start = start;
-    }
-
-    public String getEnd() {
-        return end;
-    }
-
-    public void setEnd(String end) {
-        this.end = end;
+    public void setHours(List<String> hours) {
+        this.hours = hours;
     }
 }

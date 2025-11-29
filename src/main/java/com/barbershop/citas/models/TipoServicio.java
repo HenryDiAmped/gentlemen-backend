@@ -1,10 +1,15 @@
 package com.barbershop.citas.models;
 
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -16,7 +21,12 @@ public class TipoServicio {
 	private int idTipoServicio;
 	
 	@Column(name = "nombre", length = 45, nullable = false, unique = true)
+	@JsonProperty("category")
 	private String nombre;
+	
+	@OneToMany(mappedBy = "tipoServicio", orphanRemoval = true)
+	@JsonProperty("items")
+	private List<Servicio> servicios;
 	
 	public TipoServicio() {
 		// TODO Auto-generated constructor stub
@@ -36,5 +46,13 @@ public class TipoServicio {
 
 	public void setNombre(String nombre) {
 		this.nombre = nombre;
+	}
+
+	public List<Servicio> getServicios() {
+		return servicios;
+	}
+
+	public void setServicios(List<Servicio> servicios) {
+		this.servicios = servicios;
 	}
 }
