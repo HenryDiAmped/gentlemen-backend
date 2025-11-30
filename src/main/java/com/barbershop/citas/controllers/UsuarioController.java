@@ -1,13 +1,12 @@
 package com.barbershop.citas.controllers;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.security.crypto.password.PasswordEncoder; // IMPORTANTE
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,98 +15,102 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.barbershop.citas.models.Administrador;
-import com.barbershop.citas.models.Cliente;
 import com.barbershop.citas.models.Usuario;
-import com.barbershop.citas.models.Usuario.TipoUsuario;
-import com.barbershop.citas.services.AdministradorService;
-import com.barbershop.citas.services.ClienteService;
-import com.barbershop.citas.services.UsuarioService;
+import com.barbershop.citas.models.dto.ChangePasswordRequest;
+import com.barbershop.citas.repositorys.UsuarioRepository;
 
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("/api/v1/usuarios")
+@CrossOrigin(origins = "http://localhost:4200")
 public class UsuarioController {
-	@Autowired
-	private UsuarioService service;
 
-	@Autowired
-	private AdministradorService serviceA;
-		
-	@Autowired
-	private ClienteService serviceC;
-	
-	@GetMapping("/usuarios")
-	public List<Usuario> listar() {
-		return service.list();
-	}
+    @Autowired
+    private UsuarioRepository usuarioRepository;
 
-	@PostMapping("/usuarios")
-	public Usuario guardar(@RequestBody Usuario u) {
-		if (u.getIdUsuario() != 0) {
-			Usuario usuarioExistente = service.listById(u.getIdUsuario()).get();
+    // Inyectamos esto para poder encriptar la contraseña al actualizar
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
-			if (usuarioExistente != null) {
-				if (u.getContrasena() == null || u.getContrasena().trim().isEmpty()) {
-					u.setContrasena(usuarioExistente.getContrasena());
-				}
+    // Listar todos los usuarios
+    @GetMapping
+    public List<Usuario> listarUsuarios() {
+        return usuarioRepository.findAll();
+    }
 
-			}
-		}
+    // Obtener un usuario por ID
+    @GetMapping("/{id}")
+    public ResponseEntity<Usuario> obtenerUsuario(@PathVariable int id) {
+        Optional<Usuario> usuario = usuarioRepository.findById(id);
+        return usuario.map(ResponseEntity::ok)
+                      .orElseGet(() -> ResponseEntity.notFound().build());
+    }
 
-		Usuario usuMandar = service.save(u);
+    // Crear usuario (Básico)
+    @PostMapping
+    public Usuario crearUsuario(@RequestBody Usuario usuario) {
+        // Si creas usuarios por aquí, recuerda encriptar la contraseña también
+        usuario.setContrasena(passwordEncoder.encode(usuario.getContrasena()));
+        return usuarioRepository.save(usuario);
+    }
+    
+    // Actualizar usuario (CORREGIDO)
+    @PutMapping("/{idUsuario}") // Quitamos "/usuarios" para evitar duplicidad
+    public ResponseEntity<Usuario> actualizar(@PathVariable int idUsuario, @RequestBody Usuario u) {
+        // Usamos usuarioRepository, no 'service'
+        Optional<Usuario> usuarioExistenteOpt = usuarioRepository.findById(idUsuario);
 
-		if (usuMandar.getTipoUsuario() == TipoUsuario.ADMINISTRADOR) {
-			Administrador admin = new Administrador();
-			admin.setUsuario(usuMandar);
-			serviceA.save(admin);
-		} else if (usuMandar.getTipoUsuario() == TipoUsuario.CLIENTE) {
-			Cliente cliente = new Cliente();
-			cliente.setUsuario(usuMandar);
-			serviceC.save(cliente);
-		}
+        if (!usuarioExistenteOpt.isPresent()) {
+            return ResponseEntity.notFound().build();
+        }
 
-		return usuMandar;
-	}
+        Usuario usuarioExistente = usuarioExistenteOpt.get();
 
-	@PutMapping("/usuarios/{idUsuario}")
-	public ResponseEntity<Usuario> actualizar(@PathVariable int idUsuario, @RequestBody Usuario u) {
-		Optional<Usuario> usuarioExistenteOpt = service.listById(idUsuario);
+        // Actualizamos datos básicos
+        usuarioExistente.setNombres(u.getNombres());
+        usuarioExistente.setApellidos(u.getApellidos());
+        usuarioExistente.setDni(u.getDni());
+        
+        // Manejo seguro del correo/email
+        // Verificamos si en el JSON viene como 'email' (getter) o 'correo'
+        String nuevoCorreo = u.getCorreo(); // Asegúrate que Usuario.java tenga getCorreo() o getEmail()
+        if (nuevoCorreo != null && !nuevoCorreo.isEmpty()) {
+             usuarioExistente.setEmail(nuevoCorreo);
+        }
+        
+        usuarioExistente.setCelular(u.getCelular());
+        
+        // --- PROTECCIÓN DE CONTRASEÑA ---
+        // 1. Verificamos que venga una contraseña nueva y no esté vacía
+        if (u.getContrasena() != null && !u.getContrasena().isEmpty()) {
+            // 2. LA ENCRIPTAMOS antes de guardar
+            String passwordEncriptada = passwordEncoder.encode(u.getContrasena());
+            usuarioExistente.setContrasena(passwordEncriptada);
+        }
+        
+        // Guardamos usando el repositorio
+        Usuario usuarioActualizado = usuarioRepository.save(usuarioExistente);
+        return ResponseEntity.ok(usuarioActualizado);
+    }
+    
+    @PutMapping("/{idUsuario}/cambiar-password")
+    public ResponseEntity<?> cambiarContrasena(@PathVariable int idUsuario, @RequestBody ChangePasswordRequest request) {
+        
+        Optional<Usuario> usuarioOpt = usuarioRepository.findById(idUsuario);
+        if (!usuarioOpt.isPresent()) {
+            return ResponseEntity.notFound().build();
+        }
 
-		if (!usuarioExistenteOpt.isPresent()) {
-			return ResponseEntity.notFound().build();
-		}
+        Usuario usuario = usuarioOpt.get();
 
-		Usuario usuarioExistente = usuarioExistenteOpt.get();
+        // 1. Verificar que la contraseña ACTUAL coincida con la de la BD
+        if (!passwordEncoder.matches(request.getCurrentPassword(), usuario.getContrasena())) {
+            return ResponseEntity.badRequest().body("{\"error\": \"La contraseña actual es incorrecta\"}");
+        }
 
-		usuarioExistente.setNombres(u.getNombres());
-		usuarioExistente.setApellidos(u.getApellidos());
-		usuarioExistente.setDni(u.getDni());
-		usuarioExistente.setEmail(u.getCorreo());
-		usuarioExistente.setCelular(u.getCelular());
-		usuarioExistente.setTipoUsuario(u.getTipoUsuario());
-		usuarioExistente.setContrasena(u.getContrasena());
+        // 2. Encriptar y guardar la NUEVA contraseña
+        usuario.setContrasena(passwordEncoder.encode(request.getNewPassword()));
+        usuarioRepository.save(usuario);
 
-		Usuario usuarioActualizado = service.save(usuarioExistente);
-		return ResponseEntity.ok(usuarioActualizado);
-	}
-
-	@DeleteMapping("/usuarios/{idUsuario}")
-	public ResponseEntity<Map<String, Boolean>> eliminar(@PathVariable int idUsuario) {
-		boolean eliminado = service.delete(idUsuario);
-		Map<String, Boolean> response = new HashMap<>();
-
-		if (eliminado) {
-			response.put("deleted", true);
-			return ResponseEntity.ok(response);
-		} else {
-			response.put("deleted", false);
-			return ResponseEntity.status(404).body(response); // 404 Not Found
-		}
-	}
-
-	@GetMapping("/usuarios/{idUsuario}")
-	public ResponseEntity<Usuario> listarPorId(@PathVariable int idUsuario) {
-		Optional<Usuario> usu = service.listById(idUsuario);
-		return usu.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
-	}
+        return ResponseEntity.ok().body("{\"mensaje\": \"Contraseña actualizada correctamente\"}");
+    }
 }

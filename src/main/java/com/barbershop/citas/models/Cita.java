@@ -1,106 +1,84 @@
 package com.barbershop.citas.models;
 
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
+import java.time.LocalDate;
+import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 @Entity
 @Table(name="Citas")
 public class Cita {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id_cita")
-	private int idCita;
-	
-	@Enumerated(EnumType.STRING)
-	@Column(name = "estado", nullable = false)
-	private Estado estado;
-	
-	public enum Estado {
-	    ATENDIDO,
-	    POR_ATENDER
-	}
-	
-	@ManyToOne
-	@JoinColumn(name="id_cliente", nullable = false)
-	@OnDelete(action=OnDeleteAction.CASCADE) //Regla de negocio
-	private Cliente cliente;
-	
-	@OneToOne
-	@JoinColumn(name="id_horario_atencion", nullable = false)
-	@OnDelete(action=OnDeleteAction.NO_ACTION) //Regla de negocio
-	private HorariosAtencion horariosAtencion;
-	
-	@OneToOne
-	@JoinColumn(name="id_comentario")
-	@OnDelete(action=OnDeleteAction.SET_NULL) //Regla de negocio
-	private Comentario comentario;
-	
-	@ManyToOne
-	@JoinColumn(name="id_servicio", nullable = false)
-	@OnDelete(action=OnDeleteAction.NO_ACTION) //Regla de negocio
-	private Servicio servicio;
-	
-	public Cita() {
-		// TODO Auto-generated constructor stub
-	}
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_cita")
+    private int idCita;
+    
+    @Column(name = "fecha", nullable = false)
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate fecha;
+    
+    @Column(name = "hora", nullable = false)
+    private String hora;
+    
+    @Column(name = "codigo_confirmacion", nullable = false, unique = true)
+    private String codigoConfirmacion;
+    
+    @Enumerated(EnumType.STRING)
+    @Column(name = "estado", nullable = false)
+    private Estado estado;
+    
+    public enum Estado {
+        ATENDIDO,
+        POR_ATENDER,
+        CANCELADO
+    }
+    
+    // --- RELACIONES ---
+    
+    @ManyToOne
+    @JoinColumn(name="id_cliente", nullable = true)
+    private Cliente cliente;
+    
+    @ManyToOne
+    @JoinColumn(name="id_barbero", nullable = false)
+    private Barbero barbero;
+    
+    @ManyToOne
+    @JoinColumn(name="id_servicio", nullable = false)
+    private Servicio servicio;
 
-	public int getIdCita() {
-		return idCita;
-	}
+    // --- NUEVO: Relación con SEDE ---
+    @ManyToOne
+    @JoinColumn(name="id_sede", nullable = false)
+    private Sede sede; 
+    
+    // Constructor vacío
+    public Cita() {}
 
-	public void setIdCita(int idCita) {
-		this.idCita = idCita;
-	}
+    // Getters y Setters
+    public int getIdCita() { return idCita; }
+    public void setIdCita(int idCita) { this.idCita = idCita; }
 
-	public Estado getEstado() {
-		return estado;
-	}
+    public LocalDate getFecha() { return fecha; }
+    public void setFecha(LocalDate fecha) { this.fecha = fecha; }
 
-	public void setEstado(Estado estado) {
-		this.estado = estado;
-	}
+    public String getHora() { return hora; }
+    public void setHora(String hora) { this.hora = hora; }
 
-	public Cliente getCliente() {
-		return cliente;
-	}
+    public String getCodigoConfirmacion() { return codigoConfirmacion; }
+    public void setCodigoConfirmacion(String codigoConfirmacion) { this.codigoConfirmacion = codigoConfirmacion; }
 
-	public void setCliente(Cliente cliente) {
-		this.cliente = cliente;
-	}
+    public Estado getEstado() { return estado; }
+    public void setEstado(Estado estado) { this.estado = estado; }
 
-	public HorariosAtencion getHorariosAtencion() {
-		return horariosAtencion;
-	}
+    public Cliente getCliente() { return cliente; }
+    public void setCliente(Cliente cliente) { this.cliente = cliente; }
 
-	public void setHorariosAtencion(HorariosAtencion horariosAtencion) {
-		this.horariosAtencion = horariosAtencion;
-	}
+    public Barbero getBarbero() { return barbero; }
+    public void setBarbero(Barbero barbero) { this.barbero = barbero; }
 
-	public Comentario getComentario() {
-		return comentario;
-	}
+    public Servicio getServicio() { return servicio; }
+    public void setServicio(Servicio servicio) { this.servicio = servicio; }
 
-	public void setComentario(Comentario comentario) {
-		this.comentario = comentario;
-	}
-
-	public Servicio getServicio() {
-		return servicio;
-	}
-
-	public void setServicio(Servicio servicio) {
-		this.servicio = servicio;
-	}
+    public Sede getSede() { return sede; }
+    public void setSede(Sede sede) { this.sede = sede; }
 }
