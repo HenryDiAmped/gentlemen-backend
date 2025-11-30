@@ -7,19 +7,19 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-import jakarta.persistence.CollectionTable;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.Convert;
 
 @Entity
 @Table(name="Barberos")
@@ -36,7 +36,8 @@ public class Barbero {
 	@ManyToOne
     @JoinColumn(name = "id_sede", nullable = false)
 	@OnDelete(action=OnDeleteAction.NO_ACTION) //Regla de negocio
-	@JsonProperty("locationId")
+	@JsonIgnoreProperties({"barberos", "empleados", "listaBarberos", "hibernateLazyInitializer", "handler"}) 
+    @JsonProperty("locationId")
     private Sede sede;
 	
 	@Column(name = "rating", precision = 5, scale = 2, nullable = false)
@@ -53,12 +54,11 @@ public class Barbero {
 	@Column(name = "is_active")
 	private Boolean isActive;
 	
-	@ElementCollection
-    @CollectionTable(
-            name = "barber_work_schedule",
-            joinColumns = @JoinColumn(name = "barber_id")
-    )
+	@Column(name = "work_schedule", columnDefinition = "TEXT") // Usamos TEXT para que soporte JSON largo
+    @Convert(converter = WorkScheduleConverter.class)
+    @JsonProperty("workSchedule") // Para que Jackson lo serialice bien al frontend
     private List<WorkSchedule> workSchedule;
+
 	
 	@Enumerated(EnumType.STRING)
 	@Column(name = "day_off")
@@ -83,9 +83,8 @@ public class Barbero {
 	    PART_TIME_MANANA,
 	    PART_TIME_TARDE
 	}
-	
+
 	public Barbero() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public int getIdBarbero() {
@@ -167,4 +166,6 @@ public class Barbero {
 	public void setShift(Shift shift) {
 		this.shift = shift;
 	}
+	
+
 }
