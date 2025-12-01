@@ -8,7 +8,8 @@ import com.barbershop.citas.models.Cliente;
 @Repository
 public interface ClienteRepository extends JpaRepository<Cliente, Integer> {
     
-    // Buscar si este Usuario ya tiene un perfil de Cliente creado
     Optional<Cliente> findByUsuario_IdUsuario(int idUsuario);
-    Cliente findByDni(String dni);
+    
+    // CAMBIO: Devolvemos Optional para manejar mejor si no existe
+    Optional<Cliente> findByDni(String dni);
 }

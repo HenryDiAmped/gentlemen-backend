@@ -3,6 +3,8 @@ package com.barbershop.citas.models;
 import java.time.LocalDate;
 import jakarta.persistence.*;
 import com.fasterxml.jackson.annotation.JsonFormat;
+// 1. IMPORTANTE: Agregar este import para evitar el error 500
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
 @Table(name="Citas")
@@ -32,23 +34,30 @@ public class Cita {
         CANCELADO
     }
     
-    // --- RELACIONES ---
+    // --- RELACIONES CORREGIDAS ---
+    // Agregamos fetch = FetchType.LAZY para mejorar rendimiento
+    // Agregamos @JsonIgnoreProperties para romper el bucle infinito
     
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="id_cliente", nullable = true)
-    private Cliente cliente;
+    // Esto le dice a Java: "Cuando muestres el Cliente, NO intentes mostrar sus citas ni sus reservas"
+    @JsonIgnoreProperties({"citas", "reservas", "hibernateLazyInitializer", "handler"})
+    private Cliente cliente; 
+    // NOTA: Si en tu proyecto usas la clase 'Usuario' en vez de 'Cliente', cambia el tipo aquí.
     
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="id_barbero", nullable = false)
+    @JsonIgnoreProperties({"citas", "reservas", "hibernateLazyInitializer", "handler"})
     private Barbero barbero;
     
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="id_servicio", nullable = false)
+    @JsonIgnoreProperties({"citas", "reservas", "hibernateLazyInitializer", "handler"})
     private Servicio servicio;
 
-    // --- NUEVO: Relación con SEDE ---
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="id_sede", nullable = false)
+    @JsonIgnoreProperties({"citas", "reservas", "hibernateLazyInitializer", "handler"})
     private Sede sede; 
     
     // Constructor vacío

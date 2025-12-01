@@ -1,9 +1,11 @@
 package com.barbershop.citas.services;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,74 +20,68 @@ public class CitaService {
     @Autowired private CitaRepository citaRepository;
     @Autowired private BarberoRepository barberoRepository;
     @Autowired private ServicioRepository servicioRepository;
-    @Autowired private ClienteRepository clienteRepository;
-    @Autowired private UsuarioRepository usuarioRepository;
-    
-    // --- NUEVO: Inyectamos SedeRepository ---
+    @Autowired private ClienteRepository clienteRepository; // O UsuarioRepository
     @Autowired private SedeRepository sedeRepository; 
 
+    // --- MÉTODO CREAR CITA CORREGIDO ---
     public Cita crearCita(CitaDTO dto) {
-        // 1. Validación de seguridad
-        if (dto.getUser().id == null) {
-            throw new RuntimeException("Error: Usuario no identificado. Debe iniciar sesión.");
+        
+        // 1. Validaciones Básicas de Nulos (Evita NullPointerException)
+        if (dto.getCliente() == null || dto.getBarbero() == null || dto.getServicio() == null) {
+            throw new RuntimeException("Faltan datos obligatorios (cliente, barbero o servicio).");
         }
 
         Cita cita = new Cita();
         
-        cita.setFecha(dto.getDate());
-        cita.setHora(dto.getTime());
-        cita.setCodigoConfirmacion(dto.getConfirmationNumber());
+        // 2. Conversión de Fecha (String -> LocalDate)
+        // El DTO trae "2025-12-10", la Entidad quiere LocalDate
+        cita.setFecha(LocalDate.parse(dto.getFecha())); 
+        cita.setHora(dto.getHora());
+        
+        // 3. Generar Código si no viene
+        String codigo = dto.getCodigoConfirmacion();
+        if (codigo == null || codigo.isEmpty()) {
+            codigo = UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+        }
+        cita.setCodigoConfirmacion(codigo);
+        
         cita.setEstado(Cita.Estado.POR_ATENDER);
 
-        // 2. RELACIÓN CON SEDE (Usando SedeRepository)
-        if (dto.getLocation() == null || dto.getLocation().id == 0) {
-            throw new RuntimeException("Error: La sede es obligatoria para agendar la cita.");
+        // 4. RELACIÓN CON SEDE
+        if (dto.getSede() != null) {
+            Sede sede = sedeRepository.findById(dto.getSede().idSede)
+                .orElseThrow(() -> new RuntimeException("Sede no encontrada con ID: " + dto.getSede().idSede));
+            cita.setSede(sede);
+        } else {
+             throw new RuntimeException("La sede es obligatoria.");
         }
-        
-        Sede sede = sedeRepository.findById(dto.getLocation().id)
-        	    .orElseThrow(() -> new RuntimeException("Sede no encontrada en la base de datos"));
-        	cita.setSede(sede);
 
-        // 3. Relaciones Básicas
-        Barbero barbero = barberoRepository.findById(dto.getBarber().id)
+        // 5. RELACIÓN CON BARBERO
+        Barbero barbero = barberoRepository.findById(dto.getBarbero().idBarbero)
             .orElseThrow(() -> new RuntimeException("Barbero no encontrado"));
         cita.setBarbero(barbero);
 
-        Servicio servicio = servicioRepository.findById(dto.getService().id)
+        // 6. RELACIÓN CON SERVICIO
+        Servicio servicio = servicioRepository.findById(dto.getServicio().idServicio)
             .orElseThrow(() -> new RuntimeException("Servicio no encontrado"));
         cita.setServicio(servicio);
 
-        // 4. Gestión del Cliente (Vinculado al Usuario)
-        Cliente cliente = clienteRepository.findByUsuario_IdUsuario(dto.getUser().id)
-                .orElse(null);
-
-        if (cliente == null) {
-            // Si es nuevo cliente, lo creamos
-            Usuario usuario = usuarioRepository.findById(dto.getUser().id)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado en BD"));
-
-            cliente = new Cliente();
-            cliente.setUsuario(usuario);
-            cliente.setNombres(dto.getUser().firstName);
-            cliente.setApellidos(dto.getUser().lastName);
-            cliente.setDni(dto.getUser().dni);
-            cliente.setCelular(dto.getUser().phone);
-            cliente.setCorreo(dto.getUser().email);
-            
-            cliente = clienteRepository.save(cliente);
-        } else {
-            // Actualizamos teléfono por si cambió
-            cliente.setCelular(dto.getUser().phone);
-            clienteRepository.save(cliente);
-        }
+        // 7. RELACIÓN CON CLIENTE
+        // NOTA IMPORTANTE: Ya no creamos el cliente aquí porque el DTO solo trae el ID.
+        // Asumimos que el cliente ya se registró previamente.
+        Cliente cliente = clienteRepository.findById(dto.getCliente().idUsuario)
+                .orElseThrow(() -> new RuntimeException("Cliente/Usuario no encontrado en BD"));
         
         cita.setCliente(cliente);
 
         return citaRepository.save(cita);
     }
 
-    // Listar mis reservas (Cliente)
+    // Listar mis reservas
     public List<Cita> listarCitasPorUsuario(int idUsuario) {
+        // Asegúrate que tu repositorio tenga este método. 
+        // Si usas Usuario en vez de Cliente, puede ser: findByCliente_IdUsuario(idUsuario)
+        // O si la relación es directa: findByClienteId(idUsuario)
         return citaRepository.findByCliente_Usuario_IdUsuario(idUsuario);
     }
 
@@ -98,6 +94,7 @@ public class CitaService {
             throw new RuntimeException("La cita ya estaba cancelada.");
         }
 
+        // Convertimos la fecha y hora de la cita a un objeto LocalDateTime completo
         LocalDateTime fechaHoraCita = LocalDateTime.of(
             cita.getFecha(), 
             LocalTime.parse(cita.getHora()) 
@@ -106,8 +103,11 @@ public class CitaService {
         LocalDateTime ahora = LocalDateTime.now();
         long horasDiferencia = ChronoUnit.HOURS.between(ahora, fechaHoraCita);
 
+        // Validación: Solo cancelar si faltan más de 2 horas
+        // Nota: Si la cita ya pasó (diferencia negativa), tampoco debería dejar cancelar, o sí? 
+        // Usualmente no se cancelan citas pasadas.
         if (horasDiferencia < 2) {
-            throw new RuntimeException("No se puede cancelar con menos de 2 horas de anticipación.");
+            throw new RuntimeException("No se puede cancelar con menos de 2 horas de anticipación o si ya pasó.");
         }
                 
         cita.setEstado(Cita.Estado.CANCELADO);

@@ -9,8 +9,13 @@ import org.springframework.stereotype.Repository;
 import com.barbershop.citas.models.Cita;
 
 @Repository
-public interface CitaRepository extends JpaRepository<Cita, Integer>{
-	// Busca todas las citas por id del cliente
-	List<Cita> findByCliente_Usuario_IdUsuario(int idUsuario);
-	Optional<Cita> findByCodigoConfirmacion(String codigoConfirmacion);
+public interface CitaRepository extends JpaRepository<Cita, Integer> {
+
+    // --- CORRECCIÓN AQUÍ ---
+    // ANTES (Error): findByUsuario_IdUsuario(int idUsuario);
+    // AHORA (Correcto): Buscamos dentro de 'cliente', luego dentro de 'usuario'
+    List<Cita> findByCliente_Usuario_IdUsuario(int idUsuario);
+    
+    // Buscar por código de confirmación (para cancelar)
+    Optional<Cita> findByCodigoConfirmacion(String codigoConfirmacion);
 }

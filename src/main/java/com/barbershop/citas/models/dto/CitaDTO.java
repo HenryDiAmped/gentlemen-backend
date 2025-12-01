@@ -1,56 +1,64 @@
 package com.barbershop.citas.models.dto;
 
-import java.time.LocalDate;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.Serializable;
 
-public class CitaDTO {
-    private LocalDate date;      
-    private String time;         
-    private BarberData barber;   
-    private ServiceData service; 
-    private UserData user;
-    
-    // --- NUEVO: Recibe la Sede desde Angular ---
-    // Angular envía: "location": { "id": 1 }
-    private LocationData location; 
-    
-    private String confirmationNumber;
+public class CitaDTO implements Serializable {
 
-    // Clases internas para mapear el JSON
-    public static class BarberData { public int id; }
-    public static class ServiceData { public int id; }
-    
-    // Clase interna para la Sede (aunque se llame LocationData por el frontend)
-    public static class LocationData { public int id; } 
+    private String fecha;
+    private String hora;
+    private String codigoConfirmacion;
 
-    public static class UserData {
-        public Integer id; 
-        public String firstName;
-        public String lastName;
-        public String email;
-        public String phone;
-        public String dni;
+    // --- CORRECCIÓN AQUÍ ---
+    // Usamos @JsonProperty para mapear "cliente" (del JSON) a "usuario" o "cliente" (en Java)
+    @JsonProperty("cliente") 
+    private UsuarioIdDTO cliente; // Antes se llamaba 'user' y por eso fallaba
+
+    @JsonProperty("barbero")
+    private BarberoIdDTO barbero;
+
+    @JsonProperty("servicio")
+    private ServicioIdDTO servicio;
+
+    @JsonProperty("sede")
+    private SedeIdDTO sede;
+
+    // --- CLASES INTERNAS PARA LOS IDs ---
+    public static class UsuarioIdDTO {
+        public int idUsuario; // Debe coincidir con lo que envía Angular ({ idUsuario: 1 })
     }
 
-    // Getters y Setters
-    public LocalDate getDate() { return date; }
-    public void setDate(LocalDate date) { this.date = date; }
+    public static class BarberoIdDTO {
+        public int idBarbero;
+    }
+
+    public static class ServicioIdDTO {
+        public int idServicio;
+    }
     
-    public String getTime() { return time; }
-    public void setTime(String time) { this.time = time; }
+    public static class SedeIdDTO {
+        public int idSede;
+    }
+
+    // --- GETTERS Y SETTERS ---
+    public String getFecha() { return fecha; }
+    public void setFecha(String fecha) { this.fecha = fecha; }
+
+    public String getHora() { return hora; }
+    public void setHora(String hora) { this.hora = hora; }
+
+    public String getCodigoConfirmacion() { return codigoConfirmacion; }
+    public void setCodigoConfirmacion(String codigoConfirmacion) { this.codigoConfirmacion = codigoConfirmacion; }
+
+    public UsuarioIdDTO getCliente() { return cliente; }
+    public void setCliente(UsuarioIdDTO cliente) { this.cliente = cliente; }
+
+    public BarberoIdDTO getBarbero() { return barbero; }
+    public void setBarbero(BarberoIdDTO barbero) { this.barbero = barbero; }
+
+    public ServicioIdDTO getServicio() { return servicio; }
+    public void setServicio(ServicioIdDTO servicio) { this.servicio = servicio; }
     
-    public BarberData getBarber() { return barber; }
-    public void setBarber(BarberData barber) { this.barber = barber; }
-    
-    public ServiceData getService() { return service; }
-    public void setService(ServiceData service) { this.service = service; }
-    
-    public UserData getUser() { return user; }
-    public void setUser(UserData user) { this.user = user; }
-    
-    // Getter y Setter para Location (Sede)
-    public LocationData getLocation() { return location; }
-    public void setLocation(LocationData location) { this.location = location; }
-    
-    public String getConfirmationNumber() { return confirmationNumber; }
-    public void setConfirmationNumber(String confirmationNumber) { this.confirmationNumber = confirmationNumber; }
+    public SedeIdDTO getSede() { return sede; }
+    public void setSede(SedeIdDTO sede) { this.sede = sede; }
 }

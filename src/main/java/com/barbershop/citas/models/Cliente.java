@@ -2,15 +2,9 @@ package com.barbershop.citas.models;
 
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties; // <--- AGREGAR
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name="Clientes")
@@ -35,10 +29,11 @@ public class Cliente {
 	@Column(nullable = true)
 	private String correo;
 	
-	// REGLA DE NEGOCIO: Obligatorio tener usuario (nullable = false)
-	@OneToOne
+	@OneToOne(fetch = FetchType.LAZY) // Es mejor usar LAZY
     @JoinColumn(name = "id_usuario", nullable = false) 
-	@OnDelete(action=OnDeleteAction.CASCADE) 
+	@OnDelete(action=OnDeleteAction.CASCADE)
+    // ESTO EVITA ERRORES AL TRAER EL USUARIO DENTRO DEL CLIENTE
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"}) 
     private Usuario usuario;
 	
 	public Cliente() {}
