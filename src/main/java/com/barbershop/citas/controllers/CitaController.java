@@ -24,8 +24,6 @@ public class CitaController {
     @Autowired private BarberoRepository barberoRepository;
     @Autowired private ServicioRepository servicioRepository;
     @Autowired private SedeRepository sedeRepository;
-    
-    // --- NUEVO: Necesitamos esto para leer los datos del Usuario y crear el Cliente ---
     @Autowired private UsuarioRepository usuarioRepository; 
 
     @PostMapping
@@ -46,33 +44,26 @@ public class CitaController {
             nuevaCita.setCodigoConfirmacion(codigo);
             nuevaCita.setEstado(Cita.Estado.POR_ATENDER);
 
-            // --- LÓGICA CORREGIDA PARA EL CLIENTE ---
             int idUsuario = dto.getCliente().idUsuario;
 
-            // 1. Buscamos si ya existe un cliente vinculado a este usuario
-            // (Nota: Asegúrate de tener findByUsuario_IdUsuario en tu ClienteRepository)
             Cliente cliente = clienteRepository.findByUsuario_IdUsuario(idUsuario).orElse(null);
 
-            // 2. Si no existe (es tu caso con el ID 18), lo creamos ahora mismo
             if (cliente == null) {
                 Usuario usuario = usuarioRepository.findById(idUsuario)
                     .orElseThrow(() -> new RuntimeException("Usuario no encontrado con ID: " + idUsuario));
 
                 cliente = new Cliente();
                 cliente.setUsuario(usuario);
-                // Copiamos datos del usuario al cliente
                 cliente.setNombres(usuario.getNombres());
                 cliente.setApellidos(usuario.getApellidos());
                 cliente.setDni(usuario.getDni());
                 cliente.setCelular(usuario.getCelular());
                 cliente.setCorreo(usuario.getCorreo());
                 
-                // Guardamos el nuevo cliente
                 cliente = clienteRepository.save(cliente);
             }
             
             nuevaCita.setCliente(cliente);
-            // ----------------------------------------
 
             // BARBERO
             Barbero barbero = barberoRepository.findById(dto.getBarbero().idBarbero)
@@ -101,7 +92,6 @@ public class CitaController {
         }
     }
     
-    // ... tus otros métodos (listar, cancelar, etc) ...
     @GetMapping("/usuario/{idUsuario}")
     public ResponseEntity<List<Cita>> listarPorUsuario(@PathVariable int idUsuario) {
         return ResponseEntity.ok(citaService.listarCitasPorUsuario(idUsuario));

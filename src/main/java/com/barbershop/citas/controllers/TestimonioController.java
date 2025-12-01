@@ -15,13 +15,11 @@ public class TestimonioController {
     @Autowired
     private TestimonioService service;
 
-    // Guardar nuevo testimonio (desde el formulario web)
     @PostMapping
     public ResponseEntity<Testimonio> crear(@RequestBody Testimonio t) {
         return ResponseEntity.ok(service.guardar(t));
     }
 
-    // Listar solo los aprobados (para el Home)
     @GetMapping("/aprobados")
     public List<Testimonio> listarAprobados() {
         return service.listarAprobados();

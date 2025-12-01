@@ -30,7 +30,6 @@ public class Pedido {
     @JoinColumn(name = "id_cliente", nullable = false)
     private Cliente cliente;
     
-    // --- NUEVO: Lista de productos en este pedido ---
     @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<DetallePedido> detalles;
     
@@ -39,7 +38,7 @@ public class Pedido {
 	private Estado estado;
 	
 	public enum Estado {
-        PROCESANDO, // Antes Pendiente
+        PROCESANDO,
         ENVIADO,
         ENTREGADO,
         CANCELADO

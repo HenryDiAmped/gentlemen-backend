@@ -21,15 +21,13 @@ import com.barbershop.citas.models.Producto;
 import com.barbershop.citas.services.ProductoService;
 
 @RestController
-@RequestMapping("/api/v1/products") // Esta es la base de la URL
-@CrossOrigin(origins = "http://localhost:4200") // <--- 1. IMPORTANTE: Habilitar Angular
+@RequestMapping("/api/v1/products")
+@CrossOrigin(origins = "http://localhost:4200")
 public class ProductoController {
 	
 	@Autowired
 	private ProductoService service;
 	
-	// 2. CORRECCIÓN DE RUTAS: Quitamos "/productos" para no duplicar.
-	// La URL final será: GET /api/v1/products
 	@GetMapping 
 	public List<Producto> listar(){
 		return service.list();
@@ -50,7 +48,6 @@ public class ProductoController {
 
 	    Producto productoExistente = productoExistenteOpt.get();
 	    
-	    // --- ACTUALIZACIÓN DE CAMPOS ---
 	    productoExistente.setNombre(p.getNombre());
 	    productoExistente.setDescripcion(p.getDescripcion());
 	    productoExistente.setPrecio(p.getPrecio());
@@ -65,8 +62,6 @@ public class ProductoController {
 
 	@DeleteMapping("/{idProducto}")
 	public ResponseEntity<Map<String,Boolean>> eliminar(@PathVariable int idProducto) {
-		// Nota: Asegúrate de que tu servicio tenga el método delete que retorne boolean
-		// O usa try-catch si tu servicio lanza excepción
 		boolean eliminado = service.delete(idProducto);
 		Map<String, Boolean> response = new HashMap<>();
 		

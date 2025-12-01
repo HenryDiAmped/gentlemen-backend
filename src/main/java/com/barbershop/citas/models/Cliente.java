@@ -32,7 +32,6 @@ public class Cliente {
 	@OneToOne(fetch = FetchType.LAZY) // Es mejor usar LAZY
     @JoinColumn(name = "id_usuario", nullable = false) 
 	@OnDelete(action=OnDeleteAction.CASCADE)
-    // ESTO EVITA ERRORES AL TRAER EL USUARIO DENTRO DEL CLIENTE
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"}) 
     private Usuario usuario;
 	

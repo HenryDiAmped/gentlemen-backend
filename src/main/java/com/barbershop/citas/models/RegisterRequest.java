@@ -5,7 +5,7 @@ public class RegisterRequest {
     private String lastName;
     private String dni;
     private String email;
-    private String password; // IMPORTANTE: Debe llamarse 'password' para coincidir con Angular
+    private String password;
     private String phone;
     
     // Getters

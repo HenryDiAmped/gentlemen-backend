@@ -51,7 +51,6 @@ public class BarberoController {
 		Optional<Barbero> barberoExistente = service.listById(id);
 		
 		if (barberoExistente.isPresent()) {
-			// 2. Asegurar que el ID del objeto a guardar sea el de la ruta
 			barbero.setIdBarbero(id); 
 			Barbero barberoActualizado = service.save(barbero);
 			return new ResponseEntity<>(barberoActualizado, HttpStatus.OK);
@@ -63,7 +62,6 @@ public class BarberoController {
 	@DeleteMapping("/barberos/{id}")
 	public ResponseEntity<Void> eliminar(@PathVariable int id) {
 		if (service.delete(id)) {
-			// 204 indica éxito sin cuerpo de respuesta
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT); 
 		} else {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);

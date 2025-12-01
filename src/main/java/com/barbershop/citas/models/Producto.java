@@ -39,9 +39,8 @@ public class Producto {
 	@Column(name = "stock", nullable = false)
 	private int stock;
 	
-	// --- NUEVOS CAMPOS (Necesarios para que se vea la imagen y marca) ---
     @Column(name = "imagen_url", length = 500)
-    @JsonProperty("imageUrl") // Frontend espera "imageUrl"
+    @JsonProperty("imageUrl")
     private String imagenUrl;
 
     @ManyToOne

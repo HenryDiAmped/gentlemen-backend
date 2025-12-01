@@ -15,7 +15,7 @@ import com.barbershop.citas.services.PedidoService;
 
 @RestController
 @RequestMapping("/api/v1")
-@CrossOrigin(origins = "http://localhost:4200") // Aseguramos CORS
+@CrossOrigin(origins = "http://localhost:4200")
 public class PedidoController {
 
     @Autowired
@@ -26,8 +26,6 @@ public class PedidoController {
         return service.list();
     }
 
-    // --- AQUÍ ESTABA EL PROBLEMA ---
-    // Antes recibía 'Pedido', ahora recibe 'PedidoDTO' y llama a 'guardarDesdeDTO'
     @PostMapping("/pedidos")
     public ResponseEntity<Pedido> guardar(@RequestBody PedidoDTO pedidoDto) {
         Pedido nuevoPedido = service.guardarDesdeDTO(pedidoDto);
@@ -74,7 +72,6 @@ public class PedidoController {
                   .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    // Endpoint nuevo para listar por usuario (Mis Pedidos)
     @GetMapping("/pedidos/usuario/{idUsuario}")
     public ResponseEntity<List<Pedido>> listarPorUsuario(@PathVariable int idUsuario) {
         List<Pedido> pedidos = service.listarPorUsuario(idUsuario);

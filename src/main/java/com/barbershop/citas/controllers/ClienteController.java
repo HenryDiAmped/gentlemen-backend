@@ -30,7 +30,6 @@ public class ClienteController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    // --- NUEVO: Endpoint para buscar cliente por el ID del Usuario (Login) ---
     // Esto servirá para que Angular cargue los datos del perfil
     @GetMapping("/usuario/{idUsuario}")
     public ResponseEntity<Cliente> obtenerPorIdUsuario(@PathVariable int idUsuario) {
@@ -41,25 +40,22 @@ public class ClienteController {
     
     @GetMapping("/buscar/{dni}")
     public ResponseEntity<Cliente> buscarPorDni(@PathVariable String dni) {
-        // Actualizado para usar Optional
         return clienteRepository.findByDni(dni)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
     
-    // --- NUEVO: Actualizar Cliente (FALTABA ESTO) ---
     @PutMapping("/{id}")
     public ResponseEntity<Cliente> actualizarCliente(@PathVariable int id, @RequestBody Cliente datosActualizados) {
         Optional<Cliente> clienteOpt = clienteRepository.findById(id);
         
         if (clienteOpt.isPresent()) {
             Cliente cliente = clienteOpt.get();
-            // Actualizamos solo los datos permitidos
+            
             cliente.setNombres(datosActualizados.getNombres());
             cliente.setApellidos(datosActualizados.getApellidos());
             cliente.setCelular(datosActualizados.getCelular());
             cliente.setCorreo(datosActualizados.getCorreo());
-            // El DNI y Usuario usualmente no se cambian aquí por seguridad
             
             return ResponseEntity.ok(clienteRepository.save(cliente));
         }

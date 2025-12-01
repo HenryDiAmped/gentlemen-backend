@@ -16,8 +16,6 @@ import java.util.function.Function;
 @Component
 public class JwtUtil {
 
-    // IMPORTANTE: En producción, esta clave debe ser larga, compleja y estar en application.properties
-    // Esta es una clave de ejemplo en base64 (debe ser de al menos 256 bits para HS256)
     public static final String SECRET = "5367566B59703373367639792F423F4528482B4D6251655468576D5A71347437"; 
 
     // El token durará 10 horas (en milisegundos)

@@ -34,16 +34,10 @@ public class Cita {
         CANCELADO
     }
     
-    // --- RELACIONES CORREGIDAS ---
-    // Agregamos fetch = FetchType.LAZY para mejorar rendimiento
-    // Agregamos @JsonIgnoreProperties para romper el bucle infinito
-    
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="id_cliente", nullable = true)
-    // Esto le dice a Java: "Cuando muestres el Cliente, NO intentes mostrar sus citas ni sus reservas"
     @JsonIgnoreProperties({"citas", "reservas", "hibernateLazyInitializer", "handler"})
     private Cliente cliente; 
-    // NOTA: Si en tu proyecto usas la clase 'Usuario' en vez de 'Cliente', cambia el tipo aquí.
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="id_barbero", nullable = false)
@@ -60,7 +54,6 @@ public class Cita {
     @JsonIgnoreProperties({"citas", "reservas", "hibernateLazyInitializer", "handler"})
     private Sede sede; 
     
-    // Constructor vacío
     public Cita() {}
 
     // Getters y Setters

@@ -18,14 +18,13 @@ import com.barbershop.citas.models.dto.PaymentRequestDTO;
 public class PaymentController {
 
     public PaymentController() {
-        // Token temporal. Cuando tengas el real, ponlo aquí.
+        // Token temporal.
         MercadoPagoConfig.setAccessToken("TEST-ESPERANDO-VERIFICACION-TOKEN");
     }
 
     @PostMapping("/create_preference")
     public ResponseEntity<String> createPreference(@RequestBody PaymentRequestDTO paymentRequest) {
         try {
-            // Intentamos crear la preferencia real
             List<PreferenceItemRequest> items = new ArrayList<>();
 
             for (PaymentRequestDTO.ItemDto item : paymentRequest.getItems()) {
@@ -66,9 +65,6 @@ public class PaymentController {
             return ResponseEntity.ok(preference.getSandboxInitPoint());
 
         } catch (Exception e) {
-            // --- MODO SIMULACIÓN ---
-            // Si falla (porque el token es falso), devolvemos un link cualquiera
-            // para probar que Angular redirige bien.
             System.err.println("Mercado Pago falló (Esperado por token falso): " + e.getMessage());
             
             // Devolvemos la página de inicio de MP o Google como prueba

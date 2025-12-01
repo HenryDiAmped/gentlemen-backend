@@ -18,7 +18,7 @@ import java.util.List;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    // --- BEAN OBLIGATORIO PARA ENCRIPTAR ---
+    // --- BEAN PARA ENCRIPTAR LAS CONTRASEÑAS---
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -44,7 +44,6 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
         
         // MODIFICACIÓN IMPORTANTE:
-        // No uses "*" si allowCredentials es true. Usa la URL exacta de tu Angular.
         config.setAllowedOrigins(List.of("http://localhost:4200"));
         
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));

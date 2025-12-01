@@ -16,7 +16,7 @@ public class DetallePedido {
 
     @ManyToOne
     @JoinColumn(name = "id_pedido", nullable = false)
-    @JsonIgnore // Evita bucles infinitos al convertir a JSON
+    @JsonIgnore
     private Pedido pedido;
 
     @ManyToOne

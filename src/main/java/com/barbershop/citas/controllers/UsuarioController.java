@@ -26,17 +26,14 @@ public class UsuarioController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Map<String, String> credentials) {
-        // Aunque el frontend envía el dato bajo la llave "email" (por el servicio legacy),
-        // nosotros tomamos ese valor y lo tratamos como DNI.
         String dniIngresado = credentials.get("email"); 
         String password = credentials.get("password");
 
-        // 1. Buscamos EXCLUSIVAMENTE por DNI
         Optional<Usuario> usuarioOpt = usuarioRepository.findByDni(dniIngresado);
 
         if (usuarioOpt.isPresent()) {
             Usuario usuario = usuarioOpt.get();
-            // 2. Verificamos contraseña
+            // Verificamos contraseña
             if (passwordEncoder.matches(password, usuario.getContrasena())) {
                 return ResponseEntity.ok(usuario);
             } else {
@@ -74,7 +71,6 @@ public class UsuarioController {
 
         Usuario usuarioExistente = usuarioExistenteOpt.get();
 
-        // Actualizamos datos usando los nombres correctos del modelo
         usuarioExistente.setNombres(u.getNombres());
         usuarioExistente.setApellidos(u.getApellidos());
         usuarioExistente.setDni(u.getDni());

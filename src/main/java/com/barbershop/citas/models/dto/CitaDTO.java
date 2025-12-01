@@ -9,10 +9,8 @@ public class CitaDTO implements Serializable {
     private String hora;
     private String codigoConfirmacion;
 
-    // --- CORRECCIÓN AQUÍ ---
-    // Usamos @JsonProperty para mapear "cliente" (del JSON) a "usuario" o "cliente" (en Java)
     @JsonProperty("cliente") 
-    private UsuarioIdDTO cliente; // Antes se llamaba 'user' y por eso fallaba
+    private UsuarioIdDTO cliente;
 
     @JsonProperty("barbero")
     private BarberoIdDTO barbero;
@@ -23,9 +21,8 @@ public class CitaDTO implements Serializable {
     @JsonProperty("sede")
     private SedeIdDTO sede;
 
-    // --- CLASES INTERNAS PARA LOS IDs ---
     public static class UsuarioIdDTO {
-        public int idUsuario; // Debe coincidir con lo que envía Angular ({ idUsuario: 1 })
+        public int idUsuario;
     }
 
     public static class BarberoIdDTO {

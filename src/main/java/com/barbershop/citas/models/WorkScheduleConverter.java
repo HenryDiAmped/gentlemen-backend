@@ -19,7 +19,7 @@ public class WorkScheduleConverter implements AttributeConverter<List<WorkSchedu
         try {
             return objectMapper.writeValueAsString(attribute);
         } catch (IOException e) {
-            System.err.println("❌ ERROR escribiendo JSON a BD: " + e.getMessage());
+            System.err.println("ERROR escribiendo JSON a BD: " + e.getMessage());
             return null;
         }
     }
@@ -33,9 +33,8 @@ public class WorkScheduleConverter implements AttributeConverter<List<WorkSchedu
             // INTENTAMOS LEER EL JSON
             return objectMapper.readValue(dbData, new TypeReference<List<WorkSchedule>>() {});
         } catch (IOException e) {
-            // AQUÍ ESTÁ EL CAMBIO: Imprimir el error en la consola de Java
-            System.err.println("❌ ERROR LEYENDO JSON DE BD: " + e.getMessage());
-            System.err.println("👉 DATA QUE FALLÓ: " + dbData);
+            System.err.println("ERROR LEYENDO JSON DE BD: " + e.getMessage());
+            System.err.println("DATA QUE FALLÓ: " + dbData);
             e.printStackTrace(); 
             return new ArrayList<>();
         }

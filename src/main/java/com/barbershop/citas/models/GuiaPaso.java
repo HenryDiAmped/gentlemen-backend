@@ -11,7 +11,7 @@ public class GuiaPaso {
     
     @Id
     @Column(name = "paso_key", length = 20)
-    private String pasoKey; // Ej: 'step1', 'contact'
+    private String pasoKey;
 
     private String title;
     private String description;

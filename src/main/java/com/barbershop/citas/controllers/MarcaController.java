@@ -14,7 +14,7 @@ import com.barbershop.citas.services.MarcaService;
 
 @RestController
 @RequestMapping("/api/v1/marcas")
-@CrossOrigin(origins = "http://localhost:4200") // Permite conexión desde Angular
+@CrossOrigin(origins = "http://localhost:4200")
 public class MarcaController {
 
     @Autowired

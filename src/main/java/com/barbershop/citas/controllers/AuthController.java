@@ -86,8 +86,7 @@ public class AuthController {
         nuevoUsuario.setEmail(request.getEmail());
         nuevoUsuario.setCelular(request.getPhone());
         
-        // 4. Encriptar contraseña (AQUÍ ESTABA EL ERROR 500 ANTES)
-        // Asegúrate que RegisterRequest tenga el getter getPassword()
+        // 4. Encriptar contraseña
         if (request.getPassword() != null) {
             nuevoUsuario.setContrasena(passwordEncoder.encode(request.getPassword()));
         } else {
@@ -97,7 +96,7 @@ public class AuthController {
         // 5. Asignar rol
         nuevoUsuario.setTipoUsuario(Usuario.TipoUsuario.CLIENTE);
 
-        // 6. Guardar SOLO en Usuarios (ya que no usas tabla Clientes)
+        // 6. Guardar SOLO en Usuarios
         usuarioRepository.save(nuevoUsuario);
 
         Map<String, String> respuesta = new HashMap<>();

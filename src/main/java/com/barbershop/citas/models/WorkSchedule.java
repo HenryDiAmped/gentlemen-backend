@@ -8,7 +8,6 @@ public class WorkSchedule implements Serializable {
     private String day;
     private List<String> hours;
 
-    // ⚠️ ESTE CONSTRUCTOR VACÍO ES OBLIGATORIO PARA QUE FUNCIONE EL JSON
     public WorkSchedule() {} 
 
     public WorkSchedule(String day, List<String> hours) {
